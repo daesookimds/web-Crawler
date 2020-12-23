@@ -2,6 +2,7 @@ import re
 import os
 import pandas as pd
 from tqdm import tqdm
+from time import sleep
 from bs4 import BeautifulSoup
 from selenium import webdriver
 
@@ -57,7 +58,6 @@ def get_cat_lst(driver) :
 def item_crawl(driver, cat_nm, cat_no) :
 
     url = 'http://earlymorning.ssg.com/disp/category.ssg?dispCtgId={}'.format(cat_no)
-    #url = 'http://earlymorning.ssg.com/disp/category.ssg?dispCtgId={}'.format('6000098014')
     driver.get(url=url)
     driver.implicitly_wait(5)
 
@@ -68,8 +68,10 @@ def item_crawl(driver, cat_nm, cat_no) :
     else:
         is_last_page = int(re.findall('[0-9,]+', driver.find_element_by_css_selector('.btn_last').get_attribute('onclick'))[0]) + 1
 
+    sleep(5)
 
     for page in range(1, is_last_page):
+        sleep(2)
         page_url = url + "&page={}".format(page)
         driver.get(url=page_url)
 
@@ -101,7 +103,6 @@ def run():
 
     result = pd.DataFrame(whole_data_lst, columns=['cat_no', 'cat_nm', 'item_cd', 'item_nm', 'ssg_price', 'unit', 'rate', 'rate_cnt'])
     result.to_csv("ssg.csv", index=False)
-
 
 if __name__ == '__main__' :
     run()
